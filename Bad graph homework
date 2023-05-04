@@ -1,0 +1,26 @@
+---
+title: "Homework Graph Module 4"
+author: "Jeremy Medina"
+date: "2023-05-03"
+output: html_document
+---
+
+```{r}
+fast_food = read.csv("~/Fast Food Sales 2002.csv")
+
+library("tidyverse")
+
+chains = fast_food$Fast.Food.Chains
+money = fast_food$Sales..Billion.USD.
+
+plot1 = data.frame(chains, money)
+
+ffplot = ggplot(data = plot1)+ geom_bar(aes(x = chains, y = money, fill = chains), stat = "identity") + labs(title = "Fast food chains revenue 2002", x = "Fast Food Chain", y ="Sales (Billions USD)")+ theme(plot.title = element_text(hjust = 0.5))
+
+ffplot + theme(legend.position = "none")
+
+view(ffplot)
+
+ggsave("Fast-Food-Homework.pdf")
+
+```
