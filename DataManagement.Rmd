@@ -460,7 +460,7 @@ ggplot(table1, aes(year, cases)) +
 
 
 ```{r}
-pivot_longer() 5.5.2
+pivot_longer() #5.5.2
 
 pivot_wider()
 ```
