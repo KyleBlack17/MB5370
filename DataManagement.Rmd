@@ -314,7 +314,7 @@ ggplot(mpg, aes(displ, hwy)) +
 #GGplot has different default themes you can use to change some or all of the elements of your figure.
 
 ```{r}
-theme (panel.border = element_blank()
+theme (panel.border = element_blank(),
        panel.grid.minor.x = element_blank(),
        panel.grid.minor.y = element_blank(),
        legend.position = "right",
@@ -322,74 +322,145 @@ theme (panel.border = element_blank()
        legend.text = element_text(size = 8),
        panel.grid.major = element_blank(),
        legend.key = element_blank(),
-       legend.background = element_blank()
-       axis.text.y = element_text(colour="black")
-       axis.text.x = elemenet_text(colour= "black")
+       legend.background = element_blank(),
+       axis.text.y = element_text(colour="black"),
+       axis.text.x = elemenet_text(colour= "black"),
        text = element_text(family = "Arial")
        )
 ```
 #You can also develop your own theme! 
 
-```{r}
 
+#Workshop 4 - Data wrangling in R
+```{r}
+as_tibble(iris)
+```
+#You can convert a dataset to a tibble using the function as_tibble()
+
+```{r}
+tibble(
+  x = 1:5,
+  y = 1,
+  z = x^2 + y
+)
+```
+#You can call new variables to produce new column values.
+
+```{r}
+tb <- tibble(
+  `:)` = "smile",
+  `:(` = "frown",
+  `<3` = "kaysha"
+)
+
+tb
 ```
 
 
 ```{r}
-
+tribble(
+  ~x, ~y, ~z,
+  #---|---|---
+  "a", 2, 3.6,
+  "b", 1, 8.5
+)
 ```
 
 
 ```{r}
+tibble(
+  a = lubridate::now() + runif(1e3) * 86400,
+  b = lubridate::today() + runif(1e3) * 30,
+  c = 1:1e3,
+  d = runif(1e3),
+  e = sample(letters, 1e3, replace = TRUE)
+)
+```
+#Date formats in a tibble
 
+```{r}
+nycflights13::flights %>% 
+  print(n = 10, width = Inf)
 ```
 
 
 ```{r}
-
+options(tibble.print_min = Inf) #Shows all rows
+options(tibble.width = Inf) #Print all rows
 ```
 
 
 ```{r}
+df <- tibble(
+  x = runif(5),
+  y = rnorm(5)
+)
 
+df$x
+df[["x"]]
+#Extracting data by name
+
+df[[1]]
+#Extracting data by row position
+
+df[[3,2]]
+#Extract by exact position [row, column]
 ```
 
 
 ```{r}
-
+df <- data.frame(abc = 1, xyz = "a")
+df
+df$x #call by name!!!!!!!!!!!!!!!!!!!!!!!!!!
+df[, "xyz"] #call by exact position
 ```
 
 
 ```{r}
+read_csv("a,b,c
+         1,2,3
+         4,5,6"
+         )
 
+read_csv("The first line of metadata
+         The second line of metadata
+         x, y, z
+         1, 2, 3", skip = 2)
+
+read_csv("#A comment I want to skip
+         x, y, z
+         1, 2, 3", comment = '#')
+
+read_csv("1, 2, 3\n4, 5, 6", col_names= FALSE)
+
+read_csv("1,2,3\n4,5,6", col_names = c("x", "y", "z"))
+```
+#You can use read functions to read in your data if you know the file path. Otherwise you can create your data in R by typing it in manually. 
+#You can use skip = n to skip a certain number of lines. #Additionally, you can use comment = '#' to remove all lines that begin with a # (or you can use another character if you so choose).
+#You can use col_names = FALSE to not treat the first row of data as headings.\n is a shortcut for adding a new line
+#Col_names can be used to name columns as you see fit.
+
+```{r}
+table1 #An example of tidy data
+```
+#Rules of tidy data:
+#1) Each variable must have its own column.
+#2) Each observation must have its own row.
+#3 Each value must have its own cell.
+
+```{r}
+table1 %>% mutate(rate = cases / population * 10000) #Compute rate per 10,000 people
+
+table1 %>% count(year, wt = cases) #Compute cases per year
+
+ggplot(table1, aes(year, cases)) +
+  geom_line(aes(group = country), colour = "grey50") +
+  geom_point(aes(colour = country))
 ```
 
 
 ```{r}
+pivot_longer() 5.5.2
 
-```
-
-
-```{r}
-
-```
-
-
-```{r}
-
-```
-
-
-```{r}
-
-```
-
-
-```{r}
-
-```
-
-
-```{r}
-
+pivot_wider()
 ```
