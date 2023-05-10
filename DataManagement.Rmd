@@ -18,6 +18,7 @@ library(tmap)
 mpg
 ```
 #View the MPG dataset
+
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x= displ, y= hwy, colour= class))
@@ -593,40 +594,61 @@ ggplot(dat, aes(x = latitude, y = richness_raw)) +
 ```
 
 ```{r}
+sdat <- st_as_sf(dat, coords = c("longitude", "latitude"), 
+                 crs = 4326)
+```
+#Turn point data into spatially referenced data using R's packages for GIS and mapping.
 
+```{r}
+crs4326 <- st_crs(4326)
+crs4326 
+crs4326$Name #Pulls out the whole coordinate reference system (CRS)
+crs4326$wkt #CRS in well-known ext (WKT) format
 ```
 
 ```{r}
-
+sdat
 ```
 
 ```{r}
-
+plot(sdat["richness_raw"])
 ```
+#You can use square brackets to plot a single variable.
 
 ```{r}
-
+tm_shape(sdat) + 
+  tm_dots(col = "richness_raw")
 ```
+#tm_dots plots coordinates as dot points, other options include tm_polygons and tm_symbols
 
 ```{r}
-
+tmap_save(filename = "Richness-map.png", 
+          width = 600, height = 600)
 ```
+#Tmap_save saves a copy of your map to your current working directory.
 
 ```{r}
-
+aus <- st_read("R/Data/data-for-course/spatial-data/Aussie/Aussie.shp")
+shelf <- st_read("R/Data/data-for-course/spatial-data/aus_shelf/aus_shelf.shp")
 ```
+#Reads shapefiles into R
 
 ```{r}
-
+tm_shape(shelf) + 
+  tm_polygons()
 ```
+#Tmap provides an easy way to make a map of polygons
 
 ```{r}
-
+tm_shape(shelf, bbox = sdat) + 
+  tm_polygons() +
+  tm_shape(aus) + 
+  tm_polygons() + 
+  tm_shape(sdat) + 
+  tm_dots() +
+  tmap_style("albatross")
 ```
-
-```{r}
-
-```
+#Like ggplot, tmap allows you to add different layers onto your map.
 
 ```{r}
 
