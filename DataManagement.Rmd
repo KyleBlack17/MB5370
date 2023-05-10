@@ -6,11 +6,18 @@ output: html_document
 ---
 
 ```{r cars}
-library("tidyverse")
+library(tidyverse)
+library(ggplot2)
+library(sf)
+library(terra)
+library(tmap)
+```
+#Load packages
+
+```{r}
 mpg
 ```
-#Loaded tidyverse package, viewed the MPG dataset.
-
+#View the MPG dataset
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x= displ, y= hwy, colour= class))
