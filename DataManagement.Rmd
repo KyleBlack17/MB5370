@@ -460,7 +460,186 @@ ggplot(table1, aes(year, cases)) +
 
 
 ```{r}
-pivot_longer() #5.5.2
+table4a %>% pivot_longer(c(`1999`, `2000`), names_to = "year", values_to = "cases")
 
-pivot_wider()
+table4b %>% pivot_longer(c(`1999`, `2000`), names_to = "year", values_to = "population")
 ```
+#Pivot longer increases the number of rows and decreases the number of columns. It is also used to rename columns that have values in place of column names.
+
+```{r}
+table2 %>%
+    pivot_wider(names_from = type, values_from = count)
+```
+#Pivot wider makes the table shorter and wider by creating new columns.
+
+```{r}
+table3
+
+table3 %>% 
+  separate(rate, into = c("cases", "population"))
+```
+#Splits the "rate" column into 2 different columns and renames the old and names the new column.
+
+```{r}
+table3 %>% 
+  separate(rate, into = c("cases", "population"), convert = TRUE)
+```
+#Converted the columns cases and population from characters into a more appropriate class.
+
+```{r}
+table3 %>% 
+  separate(year, into = c("century", "year"), sep = 2)
+```
+#Separated the column year into the century and year.
+
+
+```{r}
+table5 %>% 
+  unite(new, century, year, sep = "")
+```
+#Unite is the opposite for separate, and combines the century and year columns.
+
+```{r}
+stocks <- tibble(
+  year   = c(2015, 2015, 2015, 2015, 2016, 2016, 2016),
+  qtr    = c(   1,    2,    3,    4,    2,    3,    4),
+  return = c(1.88, 0.59, 0.35,   NA, 0.92, 0.17, 2.66)
+)
+
+stocks %>% 
+  pivot_wider(names_from = year, values_from = return)
+
+stocks %>% 
+  pivot_wider(names_from = year, values_from = return) %>% 
+  pivot_longer(
+    cols = c(`2015`, `2016`), 
+    names_to = "year", 
+    values_to = "return", 
+    values_drop_na = TRUE
+  )
+
+```
+#Removes values without any data from the table by creating the year columns and dropping any NA values.
+
+```{r}
+stocks %>% 
+  complete(year, qtr)
+```
+#Complete takes a set of columns and finds all of the unique combinatinos and makes sure the original datasets contains all of the values. This includes any NA values where they are needed.
+
+```{r}
+treatment <- tribble(
+  ~ person,           ~ treatment, ~response,
+  "Derrick Whitmore", 1,           7,
+  NA,                 2,           10,
+  NA,                 3,           9,
+  "Katherine Burke",  1,           4
+)
+treatment
+
+treatment %>% 
+  fill(person)
+```
+#Fill is used to fill in any missing data entries. Takes columns with missig values and carries the last non-missing value forward into the areas where values are missing.
+
+```{r}
+#5.6 here, optional but do it!!!!!!!
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+#install.packages("sf")
+#install.packages("terra")
+#install.packages("tmap")
+```
+#These packages are for using spatial data
+
+```{r}
+dat <- read_csv("R/Data/data-for-course/copepods_raw.csv")
+dat
+```
+
+```{r}
+ggplot(dat) +
+  aes(x = longitude, y = latitude, color = richness_raw) +
+  geom_point()
+#This first "map" lacks all the features of a map including projection (bend of your data over the spherical globe)
+
+ggplot(dat, aes(x = latitude, y = richness_raw)) + 
+  stat_smooth() + 
+  geom_point()
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+
