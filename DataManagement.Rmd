@@ -651,19 +651,25 @@ tm_shape(shelf, bbox = sdat) +
 #Like ggplot, tmap allows you to add different layers onto your map.
 
 ```{r}
+#vingette('tmap-getstarted') can be used to read about how you can create different maps 
+```
 
+
+###End to end analysis
+```{r}
+Sharks <- read.csv("R/Data/Sharks.csv", 
+                   skip = 2, 
+                  check.names = FALSE,
+                   col.names = c('Area','Year 1',"2002", "delete", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "Totals"))
 ```
 
 ```{r}
-
+as.tibble(Sharks) %>% mutate("delete" = NULL)
 ```
 
 ```{r}
-
-```
-
-```{r}
-
+ggplot(Sharks) +
+  geom_line(aes(Area, "Year 1"))
 ```
 
 ```{r}
