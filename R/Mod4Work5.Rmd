@@ -1,0 +1,135 @@
+---
+title: "Module 4 Workshop 5"
+author: "Kyle Black"
+date: "2023-05-19"
+output: html_document
+---
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(sf)
+library(terra)
+library(tmap)
+```
+#Load packages
+
+```{r}
+#install.packages("sf")
+#install.packages("terra")
+#install.packages("tmap")
+```
+
+#These packages are for using spatial data
+
+```{r}
+dat <- read_csv("Data/data-for-course/copepods_raw.csv")
+dat
+```
+
+```{r}
+ggplot(dat) +
+  aes(x = longitude, y = latitude, color = richness_raw) +
+  geom_point()
+#This first "map" lacks all the features of a map including projection (bend of your data over the spherical globe)
+
+ggplot(dat, aes(x = latitude, y = richness_raw)) + 
+  stat_smooth() + 
+  geom_point()
+```
+
+```{r}
+sdat <- st_as_sf(dat, coords = c("longitude", "latitude"), 
+                 crs = 4326)
+```
+
+#Turn point data into spatially referenced data using R's packages for GIS and mapping.
+
+```{r}
+crs4326 <- st_crs(4326)
+crs4326 
+crs4326$Name #Pulls out the whole coordinate reference system (CRS)
+crs4326$wkt #CRS in well-known ext (WKT) format
+```
+
+```{r}
+sdat
+```
+
+```{r}
+plot(sdat["richness_raw"])
+```
+
+#You can use square brackets to plot a single variable.
+
+```{r}
+tm_shape(sdat) + 
+  tm_dots(col = "richness_raw")
+```
+
+#tm_dots plots coordinates as dot points, other options include tm_polygons and tm_symbols
+
+```{r}
+tmap_save(filename = "Richness-map.png", 
+          width = 600, height = 600)
+```
+
+#Tmap_save saves a copy of your map to your current working directory.
+
+```{r}
+aus <- st_read("Data/data-for-course/spatial-data/Aussie/Aussie.shp")
+shelf <- st_read("Data/data-for-course/spatial-data/aus_shelf/aus_shelf.shp")
+```
+
+#Reads shapefiles into R
+
+```{r}
+tm_shape(shelf) + 
+  tm_polygons()
+```
+
+#Tmap provides an easy way to make a map of polygons
+
+```{r}
+tm_shape(shelf, bbox = sdat) + 
+  tm_polygons() +
+  tm_shape(aus) + 
+  tm_polygons() + 
+  tm_shape(sdat) + 
+  tm_dots() +
+  tmap_style("albatross")
+```
+
+#Like ggplot, tmap allows you to add different layers onto your map.
+
+```{r}
+#vingette('tmap-getstarted') can be used to read about how you can create different maps 
+```
+
+
+###End to end analysis
+```{r}
+SharkData <- read_csv("Data/shark.csv")
+View(SharkData)
+```
+
+```{r}
+SharkData$Total <- as.numeric(as.character(SharkData$Total))
+str(SharkData$Total)
+
+SharkData$Year <- as.numeric(as.character(SharkData$CalendarYear))
+str(SharkData$CalendarYear)
+```
+
+```{r, fig.cap = TRUE,}
+ggplot(SharkData, aes(x = Year, y = Total, color = Area)) +
+  geom_point() +
+  geom_line() +
+  ylab("Number of sharks killed") +
+  labs(caption = "The amount of sharks killed every year throughout Queensland from 2001 to 2023.")
+```
+
+#For my end to end analysis, I used the Shark Control Program data that shows the number of shark deaths per year across different cities in Queensland, Australia. This data was collected from the Queensland Department of Agriculture and Fisheries. I downloaded the data as a CSV. I changed the class of the year and of the number of shark deaths so that ggplot would visualize them properly. I then renamed axis titles and added a figure caption to help translate the data.

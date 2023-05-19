@@ -1,0 +1,244 @@
+---
+title: "Module 4 Workshop 4"
+author: "Kyle Black"
+date: "2023-05-19"
+output: html_document
+---
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(sf)
+library(terra)
+library(tmap)
+```
+
+#Load packages
+
+```{r}
+as_tibble(iris)
+```
+
+#You can convert a dataset to a tibble using the function as_tibble()
+
+```{r}
+tibble(
+  x = 1:5,
+  y = 1,
+  z = x^2 + y
+)
+```
+
+#You can call new variables to produce new column values.
+
+```{r}
+tb <- tibble(
+  `:)` = "smile",
+  `:(` = "frown",
+  `<3` = "kaysha"
+)
+
+tb
+```
+
+
+```{r}
+tribble(
+  ~x, ~y, ~z,
+  #---|---|---
+  "a", 2, 3.6,
+  "b", 1, 8.5
+)
+```
+
+
+```{r}
+tibble(
+  a = lubridate::now() + runif(1e3) * 86400,
+  b = lubridate::today() + runif(1e3) * 30,
+  c = 1:1e3,
+  d = runif(1e3),
+  e = sample(letters, 1e3, replace = TRUE)
+)
+```
+
+#Date formats in a tibble
+
+```{r}
+nycflights13::flights %>% 
+  print(n = 10, width = Inf)
+```
+
+
+```{r}
+options(tibble.print_min = Inf) #Shows all rows
+options(tibble.width = Inf) #Print all rows
+```
+
+
+```{r}
+df <- tibble(
+  x = runif(5),
+  y = rnorm(5)
+)
+
+df$x
+df[["x"]]
+#Extracting data by name
+
+df[[1]]
+#Extracting data by row position
+
+df[[3,2]]
+#Extract by exact position [row, column]
+```
+
+
+```{r}
+df <- data.frame(abc = 1, xyz = "a")
+df
+df$x #call by name!!!!!!!!!!!!!!!!!!!!!!!!!!
+df[, "xyz"] #call by exact position
+```
+
+
+```{r}
+read_csv("a,b,c
+         1,2,3
+         4,5,6"
+         )
+
+read_csv("The first line of metadata
+         The second line of metadata
+         x, y, z
+         1, 2, 3", skip = 2)
+
+read_csv("#A comment I want to skip
+         x, y, z
+         1, 2, 3", comment = '#')
+
+read_csv("1, 2, 3\n4, 5, 6", col_names= FALSE)
+
+read_csv("1,2,3\n4,5,6", col_names = c("x", "y", "z"))
+```
+
+#You can use read functions to read in your data if you know the file path. Otherwise you can create your data in R by typing it in manually. 
+
+#You can use skip = n to skip a certain number of lines. #Additionally, you can use comment = '#' to remove all lines that begin with a # (or you can use another character if you so choose).
+
+#You can use col_names = FALSE to not treat the first row of data as headings.\n is a shortcut for adding a new line
+
+#Col_names can be used to name columns as you see fit.
+
+```{r}
+table1 #An example of tidy data
+```
+#Rules of tidy data:
+#1) Each variable must have its own column.
+#2) Each observation must have its own row.
+#3 Each value must have its own cell.
+
+```{r}
+table1 %>% mutate(rate = cases / population * 10000) #Compute rate per 10,000 people
+
+table1 %>% count(year, wt = cases) #Compute cases per year
+
+ggplot(table1, aes(year, cases)) +
+  geom_line(aes(group = country), colour = "grey50") +
+  geom_point(aes(colour = country))
+```
+
+
+```{r}
+table4a %>% pivot_longer(c(`1999`, `2000`), names_to = "year", values_to = "cases")
+
+table4b %>% pivot_longer(c(`1999`, `2000`), names_to = "year", values_to = "population")
+```
+
+#Pivot longer increases the number of rows and decreases the number of columns. It is also used to rename columns that have values in place of column names.
+
+```{r}
+table2 %>%
+    pivot_wider(names_from = type, values_from = count)
+```
+
+#Pivot wider makes the table shorter and wider by creating new columns.
+
+```{r}
+table3
+
+table3 %>% 
+  separate(rate, into = c("cases", "population"))
+```
+
+#Splits the "rate" column into 2 different columns and renames the old and names the new column.
+
+```{r}
+table3 %>% 
+  separate(rate, into = c("cases", "population"), convert = TRUE)
+```
+
+#Converted the columns cases and population from characters into a more appropriate class.
+
+```{r}
+table3 %>% 
+  separate(year, into = c("century", "year"), sep = 2)
+```
+
+#Separated the column year into the century and year.
+
+
+```{r}
+table5 %>% 
+  unite(new, century, year, sep = "")
+```
+
+#Unite is the opposite for separate, and combines the century and year columns.
+
+```{r}
+stocks <- tibble(
+  year   = c(2015, 2015, 2015, 2015, 2016, 2016, 2016),
+  qtr    = c(   1,    2,    3,    4,    2,    3,    4),
+  return = c(1.88, 0.59, 0.35,   NA, 0.92, 0.17, 2.66)
+)
+
+stocks %>% 
+  pivot_wider(names_from = year, values_from = return)
+
+stocks %>% 
+  pivot_wider(names_from = year, values_from = return) %>% 
+  pivot_longer(
+    cols = c(`2015`, `2016`), 
+    names_to = "year", 
+    values_to = "return", 
+    values_drop_na = TRUE
+  )
+```
+
+#Removes values without any data from the table by creating the year columns and dropping any NA values.
+
+```{r}
+stocks %>% 
+  complete(year, qtr)
+```
+
+#Complete takes a set of columns and finds all of the unique combinatinos and makes sure the original datasets contains all of the values. This includes any NA values where they are needed.
+
+```{r}
+treatment <- tribble(
+  ~ person,           ~ treatment, ~response,
+  "Derrick Whitmore", 1,           7,
+  NA,                 2,           10,
+  NA,                 3,           9,
+  "Katherine Burke",  1,           4
+)
+treatment
+
+treatment %>% 
+  fill(person)
+```
+
+#Fill is used to fill in any missing data entries. Takes columns with missig values and carries the last non-missing value forward into the areas where values are missing.
