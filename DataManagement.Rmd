@@ -5,7 +5,7 @@ date: "2023-05-02"
 output: html_document
 ---
 
-```{r cars}
+```{r}
 library(tidyverse)
 library(ggplot2)
 library(sf)
@@ -177,7 +177,7 @@ ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) +
   geom_bar(alpha = 4/5, position = "jitter")
 ```
 #Position adjustments allow us to customize our plots; identity (raw data), fill (changes heights), dodge (forces ggplot to not put things on top of each other), and jitter (shifts points a small random amount to avoid overlapping, not useful for bar charts. 
-```{r}
+```{r, eval=FALSE}
 ggplot(data = <DATA>) +
   <geom_function>
   (mapping = aes(x=, y=)),
@@ -321,7 +321,7 @@ ggplot(mpg, aes(displ, hwy)) +
 ```
 #GGplot has different default themes you can use to change some or all of the elements of your figure.
 
-```{r}
+```{r, eval=FALSE}
 theme (panel.border = element_blank(),
        panel.grid.minor.x = element_blank(),
        panel.grid.minor.y = element_blank(),
@@ -551,26 +551,6 @@ treatment %>%
 #Fill is used to fill in any missing data entries. Takes columns with missig values and carries the last non-missing value forward into the areas where values are missing.
 
 ```{r}
-#5.6 here, optional but do it!!!!!!!
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
 #install.packages("sf")
 #install.packages("terra")
 #install.packages("tmap")
@@ -657,24 +637,24 @@ tm_shape(shelf, bbox = sdat) +
 
 ###End to end analysis
 ```{r}
-Sharks <- read.csv("R/Data/Sharks.csv", 
-                   skip = 2, 
-                  check.names = FALSE,
-                   col.names = c('Area','Year 1',"2002", "delete", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "Totals"))
+SharkData <- read_csv("R/Data/shark.csv")
+View(SharkData)
 ```
 
 ```{r}
-as.tibble(Sharks) %>% mutate("delete" = NULL)
+SharkData$Total <- as.numeric(as.character(SharkData$Total))
+str(SharkData$Total)
+
+SharkData$Year <- as.numeric(as.character(SharkData$CalendarYear))
+str(SharkData$CalendarYear)
 ```
 
-```{r}
-ggplot(Sharks) +
-  geom_line(aes(Area, "Year 1"))
+```{r, fig.cap = TRUE,}
+ggplot(SharkData, aes(x = Year, y = Total, color = Area)) +
+  geom_point() +
+  geom_line() +
+  ylab("Number of sharks killed") +
+  labs(caption = "The amount of sharks killed every year throughout Queensland from 2001 to 2023.")
 ```
 
-```{r}
-
-```
-
-
-
+#For my end to end analysis, I used the Shark Control Program data that shows the number of shark deaths per year across different cities in Queensland, Australia. This data was collected from the Queensland Department of Agriculture and Fisheries. I downloaded the data as a CSV. I changed the class of the year and of the number of shark deaths so that ggplot would visualize them properly. I then renamed axis titles and added a figure caption to help translate the data.
